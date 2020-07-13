@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout >
+
+    <ScrollView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".view.auth.PhoneLoginActivity">
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="15dp"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:textColor="@color/colorPrimary"
+            android:textSize="16sp"
+            android:text="Thura Number Thavo"/>
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:src ="@drawable/ic_baseline_more_vert_24"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/whole"
+        android:layout_below="@id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="20dp"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:textColor="#A39090"
+            android:text="ChatKer Thura Number Verify Kelai SMS Vaad"/>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:text="+"/>
+            <EditText
+                android:id="@+id/ed_code_country"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:inputType="number"
+                android:maxLength="2"
+                android:maxLines="1"
+                android:text="91"
+                />
+            <EditText
+                android:id="@+id/ed_phone"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:inputType="phone"
+                android:maxLines="1"
+                android:textCursorDrawable="@drawable/cursor_color"
+                android:maxLength="10"
+                android:hint="phone number"/>
+        </LinearLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:textColor="#A39090"
+            android:layout_marginTop="15dp"
+            android:text="Aavriyo SMS ed Type Keruvo"/>
+
+        <EditText
+            android:id="@+id/ed_code"
+            android:layout_width="200dp"
+            android:gravity="center_horizontal"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:maxLength="6"
+            android:inputType="number"
+            android:textCursorDrawable="@drawable/cursor_color"
+            android:hint="OTP Thavo "/>
+    </LinearLayout>
+    <Button
+        android:id="@+id/btn_next"
+        android:layout_below="@+id/whole"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="30dp"
+        android:background="@color/colorPrimary"
+        android:textColor="@android:color/white"
+        android:text="OTP AAVAD"/>
+
+</RelativeLayout>
+    </ScrollView>
+</layout>
+

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+<item
+    android:id="@+id/menu_search"
+    android:icon="@drawable/ic_baseline_search_24"
+    android:title="Vekki"
+    app:showAsAction="always"/>
+
+    <group
+        android:id="@+id/action_more"
+        >
+         <item
+             android:id="@+id/action_new_group"
+             android:title="Kumbu Sengati Vadho" />
+        <item
+            android:id="@+id/action_new_broacast"
+            android:title="Feature" />
+        <item
+            android:id="@+id/action_wa_web"
+            android:title="Feature"/>
+        <item
+            android:id="@+id/action_starred_message"
+            android:title="Obaiya Message" />
+        <item
+            android:id="@+id/action_new_settings"
+            android:title="Settings" />
+
+    </group>
+</menu>
