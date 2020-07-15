@@ -1,10 +1,10 @@
-package com.example.chat_ker.view.starup;
-
-import androidx.appcompat.app.AppCompatActivity;
+package com.example.chat_ker.view.activites.starup;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.chat_ker.R;
 import com.example.chat_ker.view.MainActivity;

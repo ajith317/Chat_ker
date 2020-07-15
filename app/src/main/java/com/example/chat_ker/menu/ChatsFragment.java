@@ -1,8 +1,6 @@
 package com.example.chat_ker.menu;
 
 import android.content.Intent;
-import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.icu.text.DateFormat;
 import android.icu.util.Calendar;
 import android.os.Build;
@@ -13,20 +11,18 @@ import androidx.annotation.RequiresApi;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
 
 import com.example.chat_ker.R;
 import com.example.chat_ker.adapter.ChatListAdapter;
 import com.example.chat_ker.databinding.FragmentChatsBinding;
 import com.example.chat_ker.model.Chatlist;
-import com.example.chat_ker.view.contact.ContactsActivity;
+import com.example.chat_ker.view.activites.contact.ContactsActivity;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;

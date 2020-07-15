@@ -3,7 +3,6 @@ package com.example.chat_ker.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
-import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,13 +10,11 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.viewpager.widget.ViewPager;
 
 import com.bumptech.glide.Glide;
 import com.example.chat_ker.R;
 import com.example.chat_ker.model.Chatlist;
-import com.example.chat_ker.view.chats.ChatsActivity;
-import com.google.android.material.transition.Hold;
+import com.example.chat_ker.view.activites.chats.ChatsActivity;
 import com.mikhaellopez.circularimageview.CircularImageView;
 
 import java.util.List;

@@ -5,11 +5,14 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorWhite</item>
+        <item name="android:textColorSecondary">@color/colorWhite</item>
     </style>
 
     <style name="AppTheme.WhiteAccent" parent="Theme.AppCompat.Light.Dialog.Alert" >
         <item name="colorAccent">@color/colorPrimaryDark</item> <!-- Whatever color you want-->
     </style>
+
+    
 
 
 

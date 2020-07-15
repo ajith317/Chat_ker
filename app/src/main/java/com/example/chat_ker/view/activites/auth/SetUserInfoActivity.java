@@ -1,4 +1,4 @@
-package com.example.chat_ker.view.auth;
+package com.example.chat_ker.view.activites.auth;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;

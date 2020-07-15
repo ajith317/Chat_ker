@@ -2,7 +2,7 @@
 <ScrollView android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".view.starup.WelcomeActivity"
+    tools:context=".view.activites.starup.WelcomeActivity"
     xmlns:android="http://schemas.android.com/apk/res/android">
 <RelativeLayout
 

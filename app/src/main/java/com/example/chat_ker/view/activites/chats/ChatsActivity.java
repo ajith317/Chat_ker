@@ -1,14 +1,6 @@
-package com.example.chat_ker.view.chats;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.databinding.DataBindingUtil;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+package com.example.chat_ker.view.activites.chats;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -17,16 +9,20 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
-import android.widget.AbsListView;
-import android.widget.LinearLayout;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.chat_ker.R;
 import com.example.chat_ker.adapter.ChatsAdapter;
 import com.example.chat_ker.databinding.ActivityChatsBinding;
 import com.example.chat_ker.model.chat.Chats;
-import com.example.chat_ker.view.profile.ProfileActivity;
+import com.example.chat_ker.view.activites.profile.ProfileActivity;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -37,42 +33,42 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 public class ChatsActivity extends AppCompatActivity {
-
+    private static final String TAG = "ChatsActivity";
     private ActivityChatsBinding binding;
     private FirebaseUser firebaseUser;
     private DatabaseReference reference;
     private String receiverID;
     private ChatsAdapter adapter;
-    private List<Chats>list;
+    private List<Chats> list;
+    private String userProfile, userName, status;
+    private boolean isActionShown=false;
     private LinearLayoutManager linearLayoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = DataBindingUtil.setContentView(this,R.layout.activity_chats);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_chats);
 
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         reference = FirebaseDatabase.getInstance().getReference();
 
-        final Intent intent = getIntent();
-        final String userName = intent.getStringExtra("userName");
-        final String status=intent.getStringExtra("status");   //status
+        Intent intent = getIntent();
+        userName = intent.getStringExtra("userName");
+        status = intent.getStringExtra("status");   //status
         receiverID = intent.getStringExtra("userId");
-        final String userProfile = intent.getStringExtra("userProfile");
+        userProfile = intent.getStringExtra("userProfile");
 
 
-        if (receiverID!=null){
+        if (receiverID != null) {
             binding.tvUsername.setText(userName);
-            binding.status.setText(status);
+           // binding.status.setText(status);
             if (userProfile != null && !userProfile.equals("")) {
                 Glide.with(ChatsActivity.this).load(userProfile).into(binding.imageProfile);
             } else {
@@ -81,8 +77,19 @@ public class ChatsActivity extends AppCompatActivity {
                 }
             }
 
+      /*  if (receiverID!=null){
+            binding.toolbar.setTitle(userName);
+            if (userProfile != null) {
+                if (userProfile.equals("")){
+                    binding.imageProfile.setImageResource(R.drawable.usernew);  // set  default image when profile user is null
+                } else {
+                    Glide.with(this).load(userProfile).into( binding.imageProfile);
+                }
+            }
+        }
 
-            binding.imageProfile.setOnClickListener(new View.OnClickListener() {
+*/
+         binding.viewProfile.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent intent1 = new Intent(ChatsActivity.this, ProfileActivity.class);
@@ -93,21 +100,23 @@ public class ChatsActivity extends AppCompatActivity {
                     startActivity(intent1);
                 }
             });
+
+
+            binding.btnBack.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    finish();
+                }
+            });
+
+            binding.btnEmoji.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(ChatsActivity.this, "Coming Soon", Toast.LENGTH_SHORT).show();
+                }
+            });
+
         }
-
-        binding.btnBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-
-        binding.btnEmoji.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(ChatsActivity.this, "Coming Soon", Toast.LENGTH_SHORT).show();
-            }
-        });
 
 
         binding.edMessage.addTextChangedListener(new TextWatcher() {
@@ -147,6 +156,7 @@ public class ChatsActivity extends AppCompatActivity {
     }
 
     private void initBtnClick(){
+
         binding.btnSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -162,6 +172,30 @@ public class ChatsActivity extends AppCompatActivity {
                 finish();
             }
         });
+        binding.btnFile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isActionShown) {
+                    binding.layoutActions.setVisibility(View.GONE);
+                    isActionShown=false;
+                }else
+                {
+                    binding.layoutActions.setVisibility(View.VISIBLE);
+                    isActionShown=true;
+                }
+            }
+        });
+
+     /*  binding.imageProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                startActivity(new Intent(ChatsActivity.this, UserProfileActivity.class)
+                        .putExtra("receiverID",receiverID)
+                        .putExtra("userProfile",userProfile)
+                        .putExtra("userName",userName));
+            }
+        });*/
 
     }
 

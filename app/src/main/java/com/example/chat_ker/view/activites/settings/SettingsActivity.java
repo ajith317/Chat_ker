@@ -1,23 +1,20 @@
-package com.example.chat_ker.view.settings;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.databinding.DataBindingUtil;
+package com.example.chat_ker.view.activites.settings;
 
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toolbar;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
 
 import com.bumptech.glide.Glide;
 import com.example.chat_ker.R;
 import com.example.chat_ker.databinding.ActivitySettingsBinding;
-import com.example.chat_ker.model.user.User;
-import com.example.chat_ker.view.chats.ChatsActivity;
-import com.example.chat_ker.view.profile.ProfileActivity;
+import com.example.chat_ker.view.activites.profile.ProfileActivity;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;

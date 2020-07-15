@@ -14,17 +14,18 @@
         android:roundIcon="@drawable/logo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".view.chats.ChatsActivity"></activity>
-        <activity android:name=".view.contact.ContactsActivity" />
-        <activity android:name=".view.display.ViewImageActivity" />
-        <activity android:name=".view.profile.ProfileActivity" />
-        <activity android:name=".view.settings.SettingsActivity" />
-        <activity android:name=".view.auth.SetUserInfoActivity" />
-        <activity android:name=".view.auth.PhoneLoginActivity" />
-        <activity android:name=".view.starup.WelcomeActivity" />
-        <activity android:name=".view.starup.SplashScreenActivity">
+        <activity android:name=".view.activites.profile.UserProfileActivity" />
+        <activity android:name=".view.activites.chats.ChatsActivity" />
+        <activity android:name=".view.activites.contact.ContactsActivity" />
+        <activity android:name=".view.activites.display.ViewImageActivity" />
+        <activity android:name=".view.activites.profile.ProfileActivity" />
+        <activity android:name=".view.activites.settings.SettingsActivity" />
+        <activity android:name=".view.activites.auth.SetUserInfoActivity" />
+        <activity android:name=".view.activites.auth.PhoneLoginActivity" />
+        <activity android:name=".view.activites.starup.WelcomeActivity" />
+        <activity android:name=".view.activites.starup.SplashScreenActivity">
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -33,8 +34,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".view.MainActivity" />
-        <activity android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
-            android:theme="@style/Base.Theme.AppCompat"/>
+        <activity
+            android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
+            android:theme="@style/Base.Theme.AppCompat" />
     </application>
 
 </manifest>

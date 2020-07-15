@@ -1,16 +1,14 @@
-package com.example.chat_ker.view.starup;
-
-import androidx.appcompat.app.AppCompatActivity;
+package com.example.chat_ker.view.activites.starup;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 
-import com.example.chat_ker.view.MainActivity;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.chat_ker.R;
-import com.example.chat_ker.view.auth.PhoneLoginActivity;
+import com.example.chat_ker.view.activites.auth.PhoneLoginActivity;
 
 public class WelcomeActivity extends AppCompatActivity {
 

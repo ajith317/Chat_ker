@@ -1,13 +1,4 @@
-package com.example.chat_ker.view.profile;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDialogFragment;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.ActivityOptionsCompat;
-import androidx.databinding.DataBindingUtil;
+package com.example.chat_ker.view.activites.profile;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -15,54 +6,47 @@ import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.text.Html;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.WindowManager;
 import android.webkit.MimeTypeMap;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityOptionsCompat;
+import androidx.databinding.DataBindingUtil;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.GlideBitmapDrawable;
 import com.example.chat_ker.R;
+import com.example.chat_ker.common.Common;
 import com.example.chat_ker.databinding.ActivityProfileBinding;
-import com.example.chat_ker.model.user.User;
-import com.example.chat_ker.view.display.ViewImageActivity;
-import com.example.chat_ker.view.starup.SplashScreenActivity;
-
+import com.example.chat_ker.view.activites.display.ViewImageActivity;
+import com.example.chat_ker.view.activites.starup.*;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.bottomappbar.BottomAppBar;
-import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Objects;
-import  com.example.chat_ker.common.Common;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
-import static java.lang.String.valueOf;
+import java.util.HashMap;
+import java.util.Objects;
 
 public class ProfileActivity extends AppCompatActivity {
 
@@ -137,6 +121,7 @@ public class ProfileActivity extends AppCompatActivity {
                 showBottomSheetDescName();
             }
         });
+
         binding.imageProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -315,23 +300,37 @@ public class ProfileActivity extends AppCompatActivity {
 
         Intent intent = new Intent();
         intent.setType("image/*");
-        /*CropImage.activity()
+        CropImage.activity()
                 .setGuidelines(CropImageView.Guidelines.ON)
                 .start(this);
-        intent.setAction(Intent.ACTION_GET_CONTENT);*/
-        startActivityForResult(Intent.createChooser(intent, "Image Kaithi Dhovluvo"), IMAGE_GALLERY_REQUEST);
+        /*intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Image Kaithi Dhovluvo"), IMAGE_GALLERY_REQUEST);*/
 
     }
 
     @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            if (resultCode == RESULT_OK
+                    ) {
+                imageUri = result.getUri();
+                uploadToFirebase();
+            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                Exception error = result.getError();
+            }
+        }
+    }
+
+
+   /* @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE //IMAGE_GALLERY_REQUEST
                 && resultCode == RESULT_OK
                 && data != null
                 && data.getData() != null){
-           /*CropImage.ActivityResult result = CropImage.getActivityResult(data);
-            imageUri = result.getUri();*/
 
            imageUri = data.getData();
 
@@ -345,7 +344,7 @@ public class ProfileActivity extends AppCompatActivity {
             // }
 
         }
-    }
+    }*/
 
     private String getFileExtention(Uri uri) {
         ContentResolver contentResolver = getContentResolver();
@@ -393,6 +392,8 @@ public class ProfileActivity extends AppCompatActivity {
             });
         }
     }
+
+
 
     private void updateName(String newName){
         firestore.collection("User").document(firebaseUser.getUid()).update("userName",newName).addOnSuccessListener(new OnSuccessListener<Void>() {

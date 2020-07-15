@@ -1,11 +1,11 @@
-package com.example.chat_ker.view.contact;
+package com.example.chat_ker.view.activites.contact;
+
+import android.os.Bundle;
+import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
-
-import android.os.Bundle;
-import android.view.View;
 
 import com.example.chat_ker.R;
 import com.example.chat_ker.adapter.ContactsAdapter;

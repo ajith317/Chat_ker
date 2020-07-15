@@ -12,10 +12,8 @@ import androidx.viewpager.widget.ViewPager;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
 import com.example.chat_ker.R;
@@ -23,13 +21,13 @@ import com.example.chat_ker.databinding.ActivityMainBinding;
 import com.example.chat_ker.menu.CallsFragment;
 import com.example.chat_ker.menu.ChatsFragment;
 import com.example.chat_ker.menu.StatusFragment;
-import com.example.chat_ker.view.contact.ContactsActivity;
-import com.example.chat_ker.view.settings.SettingsActivity;
+import com.example.chat_ker.view.activites.settings.SettingsActivity;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+
     private ActivityMainBinding binding;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
