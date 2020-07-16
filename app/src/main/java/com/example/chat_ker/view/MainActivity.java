@@ -12,6 +12,7 @@ import androidx.viewpager.widget.ViewPager;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -22,9 +23,19 @@ import com.example.chat_ker.menu.CallsFragment;
 import com.example.chat_ker.menu.ChatsFragment;
 import com.example.chat_ker.menu.StatusFragment;
 import com.example.chat_ker.view.activites.settings.SettingsActivity;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -55,6 +66,41 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                        if (!task.isSuccessful()) {
+                            return;
+                        }
+                        String token = task.getResult().getToken();
+
+                        FirebaseUser fuser= FirebaseAuth.getInstance().getCurrentUser();
+                        if (fuser!= null ) {
+                            Map<String,String> doc=new HashMap<>();
+                            doc.put("token",token);
+                            doc.put("id",fuser.getUid());
+                            FirebaseFirestore.getInstance().collection("notification").document(fuser.getUid()).set(doc, SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if(task.isSuccessful()){
+                                        Log.d("Token:","AddedSuccessfully from msgService");
+                                    }
+                                    else{
+                                        Log.d("Token:",task.getException().getMessage());
+                                    }
+                                }
+                            });
+
+                        }
+                    }
+                });
     }
 
     private void setUpWithViewPager(ViewPager viewPager){

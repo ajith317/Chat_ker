@@ -4,14 +4,18 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.webkit.MimeTypeMap;
@@ -25,12 +29,13 @@ import androidx.core.app.ActivityOptionsCompat;
 import androidx.databinding.DataBindingUtil;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.bitmap.GlideBitmapDrawable;
 import com.example.chat_ker.R;
 import com.example.chat_ker.common.Common;
 import com.example.chat_ker.databinding.ActivityProfileBinding;
+import com.example.chat_ker.view.MainActivity;
 import com.example.chat_ker.view.activites.display.ViewImageActivity;
 import com.example.chat_ker.view.activites.starup.*;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -39,6 +44,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -46,6 +54,7 @@ import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 public class ProfileActivity extends AppCompatActivity {
@@ -127,7 +136,7 @@ public class ProfileActivity extends AppCompatActivity {
             public void onClick(View v) {
                 binding.imageProfile.invalidate();
                 Drawable dr = binding.imageProfile.getDrawable();
-                Common.IMAGE_BITMAP= ((GlideBitmapDrawable)dr.getCurrent()).getBitmap();
+                Common.IMAGE_BITMAP= ((BitmapDrawable)dr.getCurrent()).getBitmap();
                 ActivityOptionsCompat activityOptionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(ProfileActivity.this, binding.imageProfile, "image");
                 Intent intent = new Intent(ProfileActivity.this, ViewImageActivity.class);
                 startActivity(intent, activityOptionsCompat.toBundle());
