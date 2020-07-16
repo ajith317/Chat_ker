@@ -11,6 +11,16 @@ public class User {
     private String gender;
     private String bio;
 
+    public Long getLastSeen() {
+        return lastSeen;
+    }
+
+    public void setLastSeen(Long lastSeen) {
+        this.lastSeen = lastSeen;
+    }
+
+    private Long lastSeen;
+
     public User() {
     }
 

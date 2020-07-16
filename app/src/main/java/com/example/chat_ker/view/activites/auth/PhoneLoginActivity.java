@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -40,6 +42,7 @@ public class PhoneLoginActivity extends AppCompatActivity {
 
     private FirebaseUser firebaseUser;
     private FirebaseFirestore firestore;
+    private TextView status_checker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +51,7 @@ public class PhoneLoginActivity extends AppCompatActivity {
 
         mAuth=FirebaseAuth.getInstance();
         firestore = FirebaseFirestore.getInstance();
+        status_checker = (TextView)findViewById(R.id.status_checker);
 
         firebaseUser=FirebaseAuth.getInstance().getCurrentUser();
         if (firebaseUser!=null){
@@ -92,7 +96,7 @@ public class PhoneLoginActivity extends AppCompatActivity {
           @Override
           public void onVerificationFailed(@NonNull FirebaseException e) {
               Log.d(TAG,"OnVerficationFailed:"+e.getMessage());
-
+              status_checker.setText(e.getMessage());
           }
 
 

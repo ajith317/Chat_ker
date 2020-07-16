@@ -9,6 +9,7 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -22,9 +23,12 @@ import com.example.chat_ker.R;
 import com.example.chat_ker.adapter.ChatsAdapter;
 import com.example.chat_ker.databinding.ActivityChatsBinding;
 import com.example.chat_ker.model.chat.Chats;
+import com.example.chat_ker.model.user.User;
 import com.example.chat_ker.view.activites.profile.ProfileActivity;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -32,14 +36,21 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ChatsActivity extends AppCompatActivity {
     private static final String TAG = "ChatsActivity";
+    private FirebaseFirestore db;
     private ActivityChatsBinding binding;
     private FirebaseUser firebaseUser;
     private DatabaseReference reference;
@@ -49,6 +60,7 @@ public class ChatsActivity extends AppCompatActivity {
     private String userProfile, userName, status;
     private boolean isActionShown=false;
     private LinearLayoutManager linearLayoutManager;
+    private TextView tvStatus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,12 +69,35 @@ public class ChatsActivity extends AppCompatActivity {
 
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         reference = FirebaseDatabase.getInstance().getReference();
+        tvStatus = (TextView)findViewById(R.id.status);
 
         Intent intent = getIntent();
         userName = intent.getStringExtra("userName");
         status = intent.getStringExtra("status");   //status
         receiverID = intent.getStringExtra("userId");
         userProfile = intent.getStringExtra("userProfile");
+
+        db = FirebaseFirestore.getInstance();
+        if(firebaseUser != null){
+            db.collection("User").document(firebaseUser.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.isSuccessful()) {
+                        DocumentSnapshot document = task.getResult();
+                        if (document.exists()) {
+                            Long ls = Long.parseLong(document.getData().get("lastSeen").toString());
+                            Date d = new Date(ls);
+                            DateFormat f = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.mmm'Z'");
+                            tvStatus.setText(f.format(d));
+                        } else {
+                            Log.d(TAG, "No such document");
+                        }
+                    } else {
+                        Log.d(TAG, "get failed with ", task.getException());
+                    }
+                }
+            });
+        }
 
 
         if (receiverID != null) {
@@ -197,6 +232,34 @@ public class ChatsActivity extends AppCompatActivity {
             }
         });*/
 
+    }
+
+    public void updateLastSeen(){
+        if (firebaseUser !=null){
+            Long tsLong = System.currentTimeMillis()/1000;
+            Map u = new HashMap();
+            u.put("lastSeen", tsLong.toString());
+            db.collection("User").document(firebaseUser.getUid()).update(u);
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        updateLastSeen();
+
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        updateLastSeen();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        updateLastSeen();
     }
 
     private void sendTextMessage(String text){
