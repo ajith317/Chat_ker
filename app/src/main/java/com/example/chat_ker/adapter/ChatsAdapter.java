@@ -53,15 +53,21 @@ public class ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ViewHolder> 
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         private TextView textMessage;
+        private TextView textMessageTime;
+
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             textMessage = itemView.findViewById(R.id.tv_text_message);
+            textMessageTime=itemView.findViewById(R.id.tv_text_message_time);
 
 
 
         }
         void bind(Chats chats){
             textMessage.setText(chats.getTextMessage());
+            textMessageTime.setText(chats.getDateTime());
+
+
 
         }
     }

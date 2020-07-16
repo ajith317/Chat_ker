@@ -36,7 +36,6 @@ import com.google.firebase.database.ValueEventListener;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 public class ChatsActivity extends AppCompatActivity {
@@ -186,6 +185,7 @@ public class ChatsActivity extends AppCompatActivity {
             }
         });
 
+        // UserProfileActiviy
      /*  binding.imageProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -201,17 +201,13 @@ public class ChatsActivity extends AppCompatActivity {
 
     private void sendTextMessage(String text){
 
-        Date date = Calendar.getInstance().getTime();
-        @SuppressLint("SimpleDateFormat") SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
-        String today = formatter.format(date);
-
         Calendar currentDateTime = Calendar.getInstance();
         @SuppressLint("SimpleDateFormat") SimpleDateFormat df = new SimpleDateFormat("hh:mm a");
         String currentTime = df.format(currentDateTime.getTime());
 
-        
+
         Chats chats = new Chats(
-                today+", "+currentTime,
+                currentTime,
                 text,
                 "TEXT",
                 firebaseUser.getUid(),
