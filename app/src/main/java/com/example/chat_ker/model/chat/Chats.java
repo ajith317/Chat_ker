@@ -6,18 +6,26 @@ public class Chats {
     private String type;
     private String sender;
     private String receiver;
+    private boolean isseen;
 
+    public boolean isIsseen() {
+        return isseen;
+    }
 
+    public void setIsseen(boolean isseen) {
+        this.isseen = isseen;
+    }
 
     public Chats() {
     }
 
-    public Chats(String dateTime, String textMessage, String type, String sender, String receiver) {
+    public Chats(String dateTime, String textMessage, String type, String sender, String receiver,boolean isseen) {
         this.dateTime = dateTime;
         this.textMessage = textMessage;
         this.type = type;
         this.sender = sender;
         this.receiver = receiver;
+        this.isseen=isseen;
 
     }
 

@@ -33,10 +33,12 @@
 
                 <com.mikhaellopez.circularimageview.CircularImageView
                     android:id="@+id/image_profile"
-                    android:layout_width="30dp"
-                    android:layout_height="40dp"
+                    android:layout_width="50dp"
+                    android:layout_height="49dp"
                     android:src="@drawable/usernew"
-                    app:civ_border="false" />
+                    app:civ_border="true"
+                    app:civ_border_color="#A3A3A3"
+                    app:civ_border_width="2px"/>
 
                 <LinearLayout
                     android:id="@+id/view_profile"
@@ -58,10 +60,11 @@
                         android:id="@+id/status"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Ella Kendak Avviyo :9.00 AM"
+                        android:text="Kadasi Paarvo:"
                         android:paddingTop="8dp"
                         android:textSize="11sp"
                         android:textColor="@color/colorWhite"/>
+
                 </LinearLayout>
 
             </LinearLayout>

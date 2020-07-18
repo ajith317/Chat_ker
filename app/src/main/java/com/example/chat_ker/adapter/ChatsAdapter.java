@@ -43,6 +43,19 @@ public class ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ViewHolder> 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.bind(list.get(position));
+
+        Chats chats=list.get(position);
+        if (position==list.size()-1){
+            if (chats.isIsseen()){
+                holder.textMessageSeen.setText("Seen");
+            }else {
+                holder.textMessageSeen.setText("Deleiverd");
+            }
+
+        }
+        else {
+            holder.textMessageSeen.setVisibility(View.GONE);
+        }
     }
 
 
@@ -52,23 +65,23 @@ public class ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ViewHolder> 
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
+
         private TextView textMessage;
+        private  TextView textMessageSeen;
         private TextView textMessageTime;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             textMessage = itemView.findViewById(R.id.tv_text_message);
-            textMessageTime=itemView.findViewById(R.id.tv_text_message_time);
-
-
+            textMessageSeen=itemView.findViewById(R.id.tv_text_message_seen);
+          //textMessageTime=itemView.findViewById(R.id.tv_text_message_time);
 
         }
         void bind(Chats chats){
             textMessage.setText(chats.getTextMessage());
-            textMessageTime.setText(chats.getDateTime());
 
 
-
+           // textMessageTime.setText(chats.getDateTime());
         }
     }
 
@@ -77,7 +90,6 @@ public class ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ViewHolder> 
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         if (list.get(position).getSender().equals(firebaseUser.getUid())){
             return MSG_TYPE_RIGHT;
-
         }else
         {
             return MSG_TYPE_LEFT;

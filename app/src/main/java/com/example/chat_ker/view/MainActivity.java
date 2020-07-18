@@ -1,5 +1,13 @@
 package com.example.chat_ker.view;
 
+import android.content.Intent;
+import android.os.Build;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
@@ -8,14 +16,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
-
-import android.content.Intent;
-import android.os.Build;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.example.chat_ker.R;
 import com.example.chat_ker.databinding.ActivityMainBinding;
@@ -38,12 +38,16 @@ import java.util.List;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
-
+    private FirebaseFirestore db;
+    private FirebaseUser firebaseUser;
     private ActivityMainBinding binding;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
        binding= DataBindingUtil. setContentView(this, R.layout.activity_main);
+
+        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        db = FirebaseFirestore.getInstance();
 
        setUpWithViewPager(binding.viewPager);
        binding.tabLayout.setupWithViewPager(binding.viewPager);
@@ -67,11 +71,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
     @Override
     protected void onStart() {
         super.onStart();
-
         FirebaseInstanceId.getInstance().getInstanceId()
                 .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
                     @Override
@@ -171,6 +173,34 @@ public class MainActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+  /*  @Override
+    protected void onResume() {
+        super.onResume();
+        Map u = new HashMap();
+        u.put("lastSeen", "online");
+        db.collection("User").document(firebaseUser.getUid()).update(u);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        updateLastSeen();
+
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        updateLastSeen();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        updateLastSeen();
+    }*/
+
+
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void changeFabIcon(final int index){
@@ -195,4 +225,5 @@ public class MainActivity extends AppCompatActivity {
         },400);*/
 
     }
+
 }
