@@ -6,27 +6,18 @@ public class Chats {
     private String type;
     private String sender;
     private String receiver;
-    private boolean isseen;
-
-    public boolean isIsseen() {
-        return isseen;
-    }
-
-    public void setIsseen(boolean isseen) {
-        this.isseen = isseen;
-    }
+    private Boolean isseen;
 
     public Chats() {
     }
 
-    public Chats(String dateTime, String textMessage, String type, String sender, String receiver,boolean isseen) {
+    public Chats(String dateTime, String textMessage, String type, String sender, String receiver, Boolean isseen) {
         this.dateTime = dateTime;
         this.textMessage = textMessage;
         this.type = type;
         this.sender = sender;
         this.receiver = receiver;
-        this.isseen=isseen;
-
+        this.isseen = isseen;
     }
 
     public String getDateTime() {
@@ -67,5 +58,13 @@ public class Chats {
 
     public void setReceiver(String receiver) {
         this.receiver = receiver;
+    }
+
+    public Boolean getIsseen() {
+        return isseen;
+    }
+
+    public void setIsseen(Boolean isseen) {
+        this.isseen = isseen;
     }
 }

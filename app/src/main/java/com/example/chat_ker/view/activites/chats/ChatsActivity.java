@@ -1,6 +1,7 @@
 package com.example.chat_ker.view.activites.chats;
 
 import android.annotation.SuppressLint;
+
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -37,6 +38,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -59,7 +62,7 @@ public class ChatsActivity extends AppCompatActivity {
     private String userProfile, userName, status;
     private boolean isActionShown=false;
     private LinearLayoutManager linearLayoutManager;
-  private TextView tvStatus;
+    private TextView tvStatus;
   ValueEventListener seenListener;
 
     @Override
@@ -241,7 +244,7 @@ public class ChatsActivity extends AppCompatActivity {
                         .putExtra("userName",userName));
             }
         });*/
-             seenMessage(receiverID);
+             //seenMessage(receiverID);
     }
 
     private void seenMessage(final String receiverID){
@@ -252,8 +255,8 @@ public class ChatsActivity extends AppCompatActivity {
 
                 for (DataSnapshot snapshot :Datasnapshot.getChildren()){
                     HashMap<String, Object> hashMap = new HashMap<>();
-                    hashMap.put("isseen", true);
-                    snapshot.getRef().updateChildren(hashMap);
+                   // hashMap.put("isseen", true);
+                    //snapshot.getRef().updateChildren(hashMap);
                 }
             }
 
@@ -271,7 +274,7 @@ public class ChatsActivity extends AppCompatActivity {
             Long tsLong = System.currentTimeMillis()/1000;
 
             //SimpleDateFormat dateFormat=new SimpleDateFormat("hh:mm a");
-          SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
             String currentDateTime = dateFormat.format(new Date());
 
@@ -369,10 +372,22 @@ public class ChatsActivity extends AppCompatActivity {
                     list.clear();
                     for (DataSnapshot snapshot:dataSnapshot.getChildren()){
 
-                        Chats chats = snapshot.getValue(Chats.class);
+
+                          Chats chats=null;
+                          //Chats chats = snapshot.getValue(Chats.class);
+                        try{
+                            Object obj= snapshot.getValue();
+                            Log.d("ELAVU1",obj.toString());
+                            //chats=(Chats)obj;
+                            Gson gson=new Gson();
+                            JsonElement json=gson.toJsonTree(obj);
+                            chats=gson.fromJson(json,Chats.class);
+                            //chats=snapshot.getValue(Chats.class);
+                        }catch(Exception e){
+                            Log.d("EXCEPTION",e.getMessage().toString());
+                        }
                         if (chats != null && chats.getSender().equals(firebaseUser.getUid()) && chats.getReceiver().equals(receiverID)) {
                             list.add(chats);
-
                         }
                         if(chats != null && chats.getSender().equals(receiverID) && chats.getReceiver().equals(firebaseUser.getUid())){
                             list.add(chats);

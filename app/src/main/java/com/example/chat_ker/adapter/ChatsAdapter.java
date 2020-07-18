@@ -46,7 +46,7 @@ public class ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ViewHolder> 
 
         Chats chats=list.get(position);
         if (position==list.size()-1){
-            if (chats.isIsseen()){
+            if (chats.getIsseen()){
                 holder.textMessageSeen.setText("Seen");
             }else {
                 holder.textMessageSeen.setText("Deleiverd");
