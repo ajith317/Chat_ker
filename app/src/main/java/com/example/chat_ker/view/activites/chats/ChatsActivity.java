@@ -186,6 +186,8 @@ public class ChatsActivity extends AppCompatActivity {
             }
         });
 
+        initBtnClick();
+
         list = new ArrayList<>();
         linearLayoutManager = new LinearLayoutManager(this, RecyclerView.VERTICAL,false);
         linearLayoutManager.setStackFromEnd(true);
@@ -194,7 +196,6 @@ public class ChatsActivity extends AppCompatActivity {
 
         readChats();
 
-        initBtnClick();
 
     }
 
@@ -250,8 +251,9 @@ public class ChatsActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot Datasnapshot) {
 
                 for (DataSnapshot snapshot :Datasnapshot.getChildren()){
-                    Chats chats=snapshot.getValue(Chats.class);
-
+                    HashMap<String, Object> hashMap = new HashMap<>();
+                    hashMap.put("isseen", true);
+                    snapshot.getRef().updateChildren(hashMap);
                 }
             }
 
@@ -321,6 +323,8 @@ public class ChatsActivity extends AppCompatActivity {
         @SuppressLint("SimpleDateFormat") SimpleDateFormat df = new SimpleDateFormat("hh:mm a");
         String currentTime = df.format(currentDateTime.getTime());
 
+
+
         Chats chats=new Chats(
                 currentTime,
                 text,
@@ -350,9 +354,7 @@ public class ChatsActivity extends AppCompatActivity {
         DatabaseReference chatRef2 = FirebaseDatabase.getInstance().getReference("ChatList").child(receiverID).child(firebaseUser.getUid());
         chatRef2.child("chatid").setValue(firebaseUser.getUid());
 
-        if (adapter != null) {
-            adapter.notifyDataSetChanged();
-        }
+        adapter.notifyDataSetChanged();
         linearLayoutManager.scrollToPosition(list.size() - 1);
 
     }
@@ -374,10 +376,6 @@ public class ChatsActivity extends AppCompatActivity {
                         }
                         if(chats != null && chats.getSender().equals(receiverID) && chats.getReceiver().equals(firebaseUser.getUid())){
                             list.add(chats);
-                          /*  HashMap<String, Object> hashMap = new HashMap<>();
-                            hashMap.put("isseen", true);
-                            snapshot.getRef().updateChildren(hashMap);
-                            Toast.makeText(ChatsActivity.this, "Sdfasd", Toast.LENGTH_SHORT).show();*/
 
                         }
 
