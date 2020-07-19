@@ -32,10 +32,12 @@ import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 public class MainActivity extends AppCompatActivity {
     private FirebaseFirestore db;
@@ -226,4 +228,33 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d("DESTROY","WINDOW");
+        updateLastSeen();
+    }
+
+    public  void updateLastSeen(){
+        if (firebaseUser !=null){
+            Log.d("MESSAGE:","UPDATE LAST SEEN CALLED");
+            Long tsLong = System.currentTimeMillis();
+            //SimpleDateFormat dateFormat=new SimpleDateFormat("hh:mm a");
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+            String currentDateTime = dateFormat.format(tsLong+1000*60*60*5 + 1000*60*30);
+            Map u = new HashMap();
+            u.put("lastSeen",currentDateTime);
+            db.collection("User").document(firebaseUser.getUid()).update(u);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Map u = new HashMap();
+        u.put("lastSeen", "online");
+        db.collection("User").document(firebaseUser.getUid()).update(u);
+    }
 }

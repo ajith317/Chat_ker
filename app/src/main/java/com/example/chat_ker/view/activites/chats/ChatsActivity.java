@@ -244,7 +244,7 @@ public class ChatsActivity extends AppCompatActivity {
                         .putExtra("userName",userName));
             }
         });*/
-             //seenMessage(receiverID);
+             seenMessage(receiverID);
     }
 
     private void seenMessage(final String receiverID){
@@ -255,8 +255,9 @@ public class ChatsActivity extends AppCompatActivity {
 
                 for (DataSnapshot snapshot :Datasnapshot.getChildren()){
                     HashMap<String, Object> hashMap = new HashMap<>();
-                   // hashMap.put("isseen", true);
-                    //snapshot.getRef().updateChildren(hashMap);
+                    hashMap.put("isseen", true);
+                    Log.d("IN_SEEN_MESSAGE",snapshot.getValue().toString());
+                    Log.d("SnapShotParent",snapshot.getRef().toString());
                 }
             }
 
@@ -269,64 +270,12 @@ public class ChatsActivity extends AppCompatActivity {
     }
 
 
-    public  void updateLastSeen(){
-        if (firebaseUser !=null){
-            Long tsLong = System.currentTimeMillis()/1000;
 
-            //SimpleDateFormat dateFormat=new SimpleDateFormat("hh:mm a");
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-            String currentDateTime = dateFormat.format(new Date());
-
-            Map u = new HashMap();
-            u.put("lastSeen",currentDateTime);
-            db.collection("User").document(firebaseUser.getUid()).update(u);
-        }
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        Map u = new HashMap();
-        u.put("lastSeen", "online");
-        db.collection("User").document(firebaseUser.getUid()).update(u);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Map u = new HashMap();
-        u.put("lastSeen", "online");
-        db.collection("User").document(firebaseUser.getUid()).update(u);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        updateLastSeen();
-        reference.removeEventListener(seenListener);
-
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        updateLastSeen();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        updateLastSeen();
-    }
 
     private void sendTextMessage(String text){
-
         Calendar currentDateTime = Calendar.getInstance();
         @SuppressLint("SimpleDateFormat") SimpleDateFormat df = new SimpleDateFormat("hh:mm a");
         String currentTime = df.format(currentDateTime.getTime());
-
-
 
         Chats chats=new Chats(
                 currentTime,
@@ -377,12 +326,9 @@ public class ChatsActivity extends AppCompatActivity {
                           //Chats chats = snapshot.getValue(Chats.class);
                         try{
                             Object obj= snapshot.getValue();
-                            Log.d("ELAVU1",obj.toString());
-                            //chats=(Chats)obj;
                             Gson gson=new Gson();
                             JsonElement json=gson.toJsonTree(obj);
                             chats=gson.fromJson(json,Chats.class);
-                            //chats=snapshot.getValue(Chats.class);
                         }catch(Exception e){
                             Log.d("EXCEPTION",e.getMessage().toString());
                         }
@@ -396,7 +342,6 @@ public class ChatsActivity extends AppCompatActivity {
 
                     }
                     if (adapter!=null){
-
                         adapter.notifyDataSetChanged();
                         linearLayoutManager.scrollToPosition(list.size() - 1);
 
