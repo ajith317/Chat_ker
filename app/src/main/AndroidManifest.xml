@@ -14,6 +14,7 @@
         android:roundIcon="@drawable/logo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".view.activites.display.ReviewSendImageActivity"></activity>
         <activity android:name=".view.activites.profile.UserProfileActivity" />
         <activity android:name=".view.activites.chats.ChatsActivity" />
         <activity android:name=".view.activites.contact.ContactsActivity" />

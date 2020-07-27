@@ -10,6 +10,7 @@ public class User {
     private String dateOfBirth;
     private String gender;
     private String bio;
+    private Long lastSeen;
 
     public Long getLastSeen() {
         return lastSeen;
@@ -18,8 +19,6 @@ public class User {
     public void setLastSeen(Long lastSeen) {
         this.lastSeen = lastSeen;
     }
-
-    private Long lastSeen;
 
     public User() {
     }

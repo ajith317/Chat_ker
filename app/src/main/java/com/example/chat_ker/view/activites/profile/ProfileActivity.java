@@ -90,7 +90,6 @@ public class ProfileActivity extends AppCompatActivity {
             binding.btnAbout.setVisibility(View.GONE);
             binding.btnPhone.setVisibility(View.GONE);
 
-
         }
 
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -288,6 +287,8 @@ public class ProfileActivity extends AppCompatActivity {
                 binding.tvUsername.setText(userName);
                 binding.tvPhone.setText(userPhone);
                 binding.tvAbout.setText(userDesc);
+
+
                 if (imageProfile != null && !imageProfile.equals("")) {
                     Glide.with(ProfileActivity.this).load(imageProfile).into(binding.imageProfile);
                 } else {
@@ -332,28 +333,6 @@ public class ProfileActivity extends AppCompatActivity {
         }
     }
 
-
-   /* @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE //IMAGE_GALLERY_REQUEST
-                && resultCode == RESULT_OK
-                && data != null
-                && data.getData() != null){
-
-           imageUri = data.getData();
-
-            uploadToFirebase();
-            // try {
-            //     Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
-            //     binding.imageProfile.setImageBitmap(bitmap);
-//
-            // }catch (Exception e){
-            //     e.printStackTrace();
-            // }
-
-        }
-    }*/
 
     private String getFileExtention(Uri uri) {
         ContentResolver contentResolver = getContentResolver();

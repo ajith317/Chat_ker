@@ -3,6 +3,7 @@ package com.example.chat_ker.model.chat;
 public class Chats {
     private String dateTime;
     private String textMessage;
+    private String url;
     private String type;
     private String sender;
     private String receiver;
@@ -11,13 +12,22 @@ public class Chats {
     public Chats() {
     }
 
-    public Chats(String dateTime, String textMessage, String type, String sender, String receiver, Boolean isseen) {
+    public Chats(String dateTime, String textMessage,String url, String type, String sender, String receiver, Boolean isseen) {
         this.dateTime = dateTime;
         this.textMessage = textMessage;
+        this.url=url;
         this.type = type;
         this.sender = sender;
         this.receiver = receiver;
         this.isseen = isseen;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public String getDateTime() {

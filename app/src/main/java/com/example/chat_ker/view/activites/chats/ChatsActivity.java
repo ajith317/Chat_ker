@@ -2,14 +2,20 @@ package com.example.chat_ker.view.activites.chats;
 
 import android.annotation.SuppressLint;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,8 +29,13 @@ import com.bumptech.glide.Glide;
 import com.example.chat_ker.R;
 import com.example.chat_ker.adapter.ChatsAdapter;
 import com.example.chat_ker.databinding.ActivityChatsBinding;
+import com.example.chat_ker.managers.ChatService;
+import com.example.chat_ker.managers.interfaces.OnReadChatCallBack;
 import com.example.chat_ker.model.chat.Chats;
+import com.example.chat_ker.service.FirebaseService;
+import com.example.chat_ker.view.activites.dialog.DialogReviewSendImage;
 import com.example.chat_ker.view.activites.profile.ProfileActivity;
+import com.example.chat_ker.view.activites.profile.UserProfileActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -40,6 +51,8 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -48,7 +61,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TimeZone;
+
+import static com.example.chat_ker.view.MainActivity.updateLastSeen;
 
 public class ChatsActivity extends AppCompatActivity {
     private static final String TAG = "ChatsActivity";
@@ -64,15 +80,27 @@ public class ChatsActivity extends AppCompatActivity {
     private LinearLayoutManager linearLayoutManager;
     private TextView tvStatus;
   ValueEventListener seenListener;
+  private ChatService chatsService;
+    private Uri imageUri;
+    private int IMAGE_GALLERY_REQUEST = 111;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_chats);
 
+        intialzie();
+        initBtnClick();
+        readChats();
+
+
+    }
+
+    private void intialzie(){
+
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         reference = FirebaseDatabase.getInstance().getReference();
-        tvStatus = (TextView)findViewById(R.id.status);
+
 
         Intent intent = getIntent();
         userName = intent.getStringExtra("userName");
@@ -80,38 +108,7 @@ public class ChatsActivity extends AppCompatActivity {
         receiverID = intent.getStringExtra("userId");
         userProfile = intent.getStringExtra("userProfile");
 
-        db = FirebaseFirestore.getInstance();
-            if(firebaseUser != null) {
-
-                db.collection("User").document(receiverID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if (task.isSuccessful()) {
-                            DocumentSnapshot document = task.getResult();
-                            if (document.exists()) {
-
-                                Object o = document.getData().get("lastSeen");
-
-                                if (o != null) {
-                                    //Long ls = Long.parseLong(document.getData().get("lastSeen").toString());
-                                    //     Date d = new Date(ls);
-                                    //      DateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-                                    //Log.d(TAG,f.format(d));
-                                    //  binding.status.setText("KadasiPaarvo: "+o.toString());
-                                    tvStatus.setText(o.toString());
-                                } else {
-                                    tvStatus.setText("Offline");
-                                }
-                            } else {
-                                Log.d(TAG, "No such document");
-                            }
-                        } else {
-                            Log.d(TAG, "get failed with ", task.getException());
-                        }
-                    }
-                });
-        }
-
+        chatsService =new ChatService(this,receiverID);
 
         if (receiverID != null) {
             binding.tvUsername.setText(userName);
@@ -122,20 +119,38 @@ public class ChatsActivity extends AppCompatActivity {
                     binding.imageProfile.setImageDrawable(getDrawable(R.drawable.usernew));
                 }
             }
-
-      /*  if (receiverID!=null){
-            binding.toolbar.setTitle(userName);
-            if (userProfile != null) {
-                if (userProfile.equals("")){
-                    binding.imageProfile.setImageResource(R.drawable.usernew);  // set  default image when profile user is null
-                } else {
-                    Glide.with(this).load(userProfile).into( binding.imageProfile);
-                }
-            }
         }
 
-*/
-         binding.viewProfile.setOnClickListener(    new View.OnClickListener() {
+        db = FirebaseFirestore.getInstance();
+        if(firebaseUser != null) {
+
+            db.collection("User").document(receiverID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.isSuccessful()) {
+                        DocumentSnapshot document = task.getResult();
+                        if (document.exists()) {
+                            Object o = document.getData().get("lastSeen");
+                            if (o != null) {
+                                binding.status.setText("Kadasi Paarvo :  "+   o.toString());
+                            } else {
+                                tvStatus.setText("Offline");
+                            }
+                        } else {
+                            Log.d(TAG, "No such document");
+                        }
+                    } else {
+                        Log.d(TAG, "get failed with ", task.getException());
+                    }
+                }
+            });
+
+
+
+
+
+
+            binding.viewProfile.setOnClickListener(    new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent intent1 = new Intent(ChatsActivity.this, ProfileActivity.class);
@@ -148,19 +163,7 @@ public class ChatsActivity extends AppCompatActivity {
             });
 
 
-            binding.btnBack.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    finish();
-                }
-            });
 
-            binding.btnEmoji.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(ChatsActivity.this, "Coming Soon", Toast.LENGTH_SHORT).show();
-                }
-            });
 
         }
 
@@ -189,17 +192,35 @@ public class ChatsActivity extends AppCompatActivity {
             }
         });
 
-        initBtnClick();
 
         list = new ArrayList<>();
         linearLayoutManager = new LinearLayoutManager(this, RecyclerView.VERTICAL,false);
         linearLayoutManager.setStackFromEnd(true);
-
         binding.recyclerView.setLayoutManager(linearLayoutManager);
+        adapter=new ChatsAdapter(list,this);
+        binding.recyclerView.setAdapter(adapter);
+    }
 
-        readChats();
+    private void readChats() {
+        chatsService.readChatData(new OnReadChatCallBack() {
+            @Override
+            public void onReadSuccess(List<Chats> list) {
+             adapter.setList(list);
+                if (adapter!=null){
+                    adapter.notifyDataSetChanged();
+                    linearLayoutManager.scrollToPosition(list.size() - 1);
+                }else {
+                    adapter = new ChatsAdapter(list,ChatsActivity.this);
+                    binding.recyclerView.setAdapter(adapter);
 
+                }
+            }
 
+            @Override
+            public void onReadFailed() {
+                Log.d(TAG,"ONReadFailed:");
+            }
+        });
     }
 
     private void initBtnClick(){
@@ -208,7 +229,7 @@ public class ChatsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (!TextUtils.isEmpty(binding.edMessage.getText().toString())){
-                    sendTextMessage(binding.edMessage.getText().toString());
+                 chatsService.sendTextMessage(binding.edMessage.getText().toString());
                     binding.edMessage.setText("");
                 }
             }
@@ -219,7 +240,8 @@ public class ChatsActivity extends AppCompatActivity {
                 finish();
             }
         });
-        binding.btnFile.setOnClickListener(new View.OnClickListener() {
+
+       binding.btnFile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (isActionShown) {
@@ -230,6 +252,27 @@ public class ChatsActivity extends AppCompatActivity {
                     binding.layoutActions.setVisibility(View.VISIBLE);
                     isActionShown=true;
                 }
+            }
+        });
+
+        binding.btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
+        binding.btnEmoji.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(ChatsActivity.this, "Coming Soon", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        binding.btnGallery.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                    openGallery();
             }
         });
 
@@ -244,35 +287,89 @@ public class ChatsActivity extends AppCompatActivity {
                         .putExtra("userName",userName));
             }
         });*/
-             seenMessage(receiverID);
+            // seenMessage(receiverID);
+    }
+    private void openGallery(){
+
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+      startActivityForResult(Intent.createChooser(intent, "Image Kaithi Dhovluvo"), IMAGE_GALLERY_REQUEST);
+    /*     CropImage.activity()
+                .setGuidelines(CropImageView.Guidelines.ON)
+                .start(this);*/
+    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == IMAGE_GALLERY_REQUEST
+                && resultCode == RESULT_OK
+                && data != null
+                && data.getData() != null){
+            imageUri = data.getData();
+         //   uploadToFirebase();
+             try {
+                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
+                    reviewImage(bitmap);
+
+             }catch (Exception e){
+                 e.printStackTrace();
+             }
+
+        }
+        /*if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            if (resultCode == RESULT_OK
+            ) {
+                imageUri = result.getUri();
+               uploadToFirebase();
+            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                Exception error = result.getError();
+            }
+        }*/
+
     }
 
-    private void seenMessage(final String receiverID){
-
-        seenListener=reference.addValueEventListener(new ValueEventListener() {
+    private void reviewImage(Bitmap  bitmap){
+        new DialogReviewSendImage(ChatsActivity.this,bitmap).show(new DialogReviewSendImage.OnCallBack() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot Datasnapshot) {
+            public void onButtonSendClick() {
+                // to Upload Image to firebase storage to get url image...
+                if (imageUri!=null){
+                  final   ProgressDialog progressDialog=new ProgressDialog(ChatsActivity.this);
+                    progressDialog.setMessage("Image Thaderiyoo...");
+                    progressDialog.show();
 
-                for (DataSnapshot snapshot :Datasnapshot.getChildren()){
-                    HashMap<String, Object> hashMap = new HashMap<>();
-                    hashMap.put("isseen", true);
-                    Log.d("IN_SEEN_MESSAGE",snapshot.getValue().toString());
-                    Log.d("SnapShotParent",snapshot.getRef().toString());
-                }
-            }
+                    //hide action buttonss
+                    binding.layoutActions.setVisibility(View.GONE);
+                    isActionShown = false;
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
+                    new FirebaseService(ChatsActivity.this).uploadImageToFireBaseStorage(imageUri, new FirebaseService.OnCallBack() {
+                        @Override
+                        public void onUploadSuccess(String imageUrl) {
+                            // to send chat image//
+                            chatsService.sendImage(imageUrl);
+                            progressDialog.dismiss();
+                        }
 
+                        @Override
+                        public void onUploadFailed(Exception e) {
+                            e.printStackTrace();
+                        }
+                    });
+
+                 }
             }
         });
-
     }
 
 
 
 
-    private void sendTextMessage(String text){
+
+
+
+  /* private void sendTextMessage(String text){
         Calendar currentDateTime = Calendar.getInstance();
         @SuppressLint("SimpleDateFormat") SimpleDateFormat df = new SimpleDateFormat("hh:mm a");
         String currentTime = df.format(currentDateTime.getTime());
@@ -309,9 +406,9 @@ public class ChatsActivity extends AppCompatActivity {
         adapter.notifyDataSetChanged();
         linearLayoutManager.scrollToPosition(list.size() - 1);
 
-    }
+    }*/
 
-    private void readChats(){
+    /*private void readChats(){
         try {
             DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
             reference.child("Chats").addValueEventListener(new ValueEventListener() {
@@ -336,6 +433,7 @@ public class ChatsActivity extends AppCompatActivity {
                             list.add(chats);
                         }
                         if(chats != null && chats.getSender().equals(receiverID) && chats.getReceiver().equals(firebaseUser.getUid())){
+
                             list.add(chats);
 
                         }
@@ -362,5 +460,21 @@ public class ChatsActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
+    }*/
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Map u = new HashMap();
+        u.put("lastSeen", "online");
+        db.collection("User").document(firebaseUser.getUid()).update(u);
     }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        updateLastSeen();
+
+    }
+
+
 }

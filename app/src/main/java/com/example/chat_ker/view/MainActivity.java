@@ -1,5 +1,6 @@
 package com.example.chat_ker.view;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -34,18 +35,21 @@ import com.google.firebase.iid.InstanceIdResult;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
 public class MainActivity extends AppCompatActivity {
-    private FirebaseFirestore db;
-    private FirebaseUser firebaseUser;
+    private static FirebaseFirestore db;
+    private static FirebaseUser firebaseUser;
     private ActivityMainBinding binding;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
        binding= DataBindingUtil. setContentView(this, R.layout.activity_main);
 
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -76,6 +80,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        Map u = new HashMap();
+        u.put("lastSeen", "online");
+
+        db.collection("User").document(firebaseUser.getUid()).update(u);
         FirebaseInstanceId.getInstance().getInstanceId()
                 .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
                     @Override
@@ -170,39 +178,9 @@ public class MainActivity extends AppCompatActivity {
                     startActivity(new Intent(MainActivity.this, SettingsActivity.class));
                 break;
 
-
-
         }
         return super.onOptionsItemSelected(item);
     }
-  /*  @Override
-    protected void onResume() {
-        super.onResume();
-        Map u = new HashMap();
-        u.put("lastSeen", "online");
-        db.collection("User").document(firebaseUser.getUid()).update(u);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        updateLastSeen();
-
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        updateLastSeen();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        updateLastSeen();
-    }*/
-
-
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void changeFabIcon(final int index){
@@ -228,6 +206,24 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    public static void updateLastSeen(){
+        if (firebaseUser !=null){
+            Log.d("MESSAGE:","UPDATE LAST SEEN CALLED");
+            Long tsLong = System.currentTimeMillis();
+
+            Calendar currentTime = Calendar.getInstance();
+            @SuppressLint("SimpleDateFormat") SimpleDateFormat df = new SimpleDateFormat("hh:mm a");
+            String currentDateTime = df.format(currentTime.getTime());
+           /*
+              //SimpleDateFormat dateFormat=new SimpleDateFormat("hh:mm a");
+           SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+            String currentDateTime = dateFormat.format(tsLong+1000*60*60*5 + 1000*60*30);*/
+            Map u = new HashMap();
+            u.put("lastSeen",currentDateTime);
+            db.collection("User").document(firebaseUser.getUid()).update(u);
+        }
+    }
 
     @Override
     protected void onDestroy() {
@@ -236,20 +232,11 @@ public class MainActivity extends AppCompatActivity {
         updateLastSeen();
     }
 
-    public  void updateLastSeen(){
-        if (firebaseUser !=null){
-            Log.d("MESSAGE:","UPDATE LAST SEEN CALLED");
-            Long tsLong = System.currentTimeMillis();
-            //SimpleDateFormat dateFormat=new SimpleDateFormat("hh:mm a");
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-            String currentDateTime = dateFormat.format(tsLong+1000*60*60*5 + 1000*60*30);
-            Map u = new HashMap();
-            u.put("lastSeen",currentDateTime);
-            db.collection("User").document(firebaseUser.getUid()).update(u);
-        }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        updateLastSeen();
     }
-
     @Override
     protected void onResume() {
         super.onResume();
