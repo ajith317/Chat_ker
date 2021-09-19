@@ -107,6 +107,9 @@ public class PhoneLoginActivity extends AppCompatActivity {
               Log.d(TAG, "onCodeSent:" + verificationId);
 
                 binding.btnNext.setText("Tuur");
+                binding.edCode.setVisibility(View.VISIBLE);
+                binding.edCodeCountry.setEnabled(false);
+                binding.edPhone.setEnabled(false);
                     progressDialog.dismiss();
 
                     mVerficationId = verificationId;

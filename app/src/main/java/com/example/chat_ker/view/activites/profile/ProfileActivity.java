@@ -1,5 +1,6 @@
 package com.example.chat_ker.view.activites.profile;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -8,11 +9,14 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
@@ -25,10 +29,14 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.app.ActivityOptionsCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.databinding.DataBindingUtil;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.GlideBitmapDrawable;
 import com.example.chat_ker.R;
 import com.example.chat_ker.common.Common;
 import com.example.chat_ker.databinding.ActivityProfileBinding;
@@ -42,6 +50,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.components.BuildConfig;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
@@ -53,7 +62,12 @@ import com.google.firebase.storage.UploadTask;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
@@ -135,7 +149,14 @@ public class ProfileActivity extends AppCompatActivity {
             public void onClick(View v) {
                 binding.imageProfile.invalidate();
                 Drawable dr = binding.imageProfile.getDrawable();
-                Common.IMAGE_BITMAP= ((BitmapDrawable)dr.getCurrent()).getBitmap();
+
+                try {
+                    Common.IMAGE_BITMAP= ((BitmapDrawable)dr.getCurrent()).getBitmap();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Common.IMAGE_BITMAP= ((GlideBitmapDrawable)dr.getCurrent()).getBitmap();
+                }
+
                 ActivityOptionsCompat activityOptionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(ProfileActivity.this, binding.imageProfile, "image");
                 Intent intent = new Intent(ProfileActivity.this, ViewImageActivity.class);
                 startActivity(intent, activityOptionsCompat.toBundle());
@@ -166,9 +187,11 @@ public class ProfileActivity extends AppCompatActivity {
         ((View) view.findViewById(R.id.ln_camera)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getApplicationContext(),"Camera Aavai",Toast.LENGTH_SHORT).show();
+                checkCameraPermission();
                 bottomSheetDialog.dismiss();
             }
+
+
         });
 
 
@@ -188,6 +211,41 @@ public class ProfileActivity extends AppCompatActivity {
 
         bottomSheetDialog.show();
     }
+
+   
+
+        private void checkCameraPermission() {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.CAMERA},
+                        221);
+
+            } else if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        222);
+            }
+            else {
+                openCamera();
+            }
+    }
+
+    private void openCamera() {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        String timeStamp = new SimpleDateFormat("yyyyMMDD_HHmmss", Locale.getDefault()).format(new Date());
+        String imageFileName = "IMG_" + timeStamp + ".jpg";
+
+        try {
+            File file = File.createTempFile("IMG_" + timeStamp, ".jpg", getExternalFilesDir(Environment.DIRECTORY_PICTURES));
+            imageUri = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".provider", file);
+            intent.putExtra(MediaStore.EXTRA_OUTPUT,  imageUri);
+            intent.putExtra("listPhotoName", imageFileName);
+            startActivityForResult(intent, 440);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     private void showBottomSheetEditName(){
         @SuppressLint("InflateParams") View view = getLayoutInflater().inflate(R.layout.bottom_sheet_edit_name,null);
@@ -330,6 +388,10 @@ public class ProfileActivity extends AppCompatActivity {
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception error = result.getError();
             }
+        }
+        if (requestCode == 440
+                && resultCode == RESULT_OK){
+            uploadToFirebase();
         }
     }
 

@@ -7,9 +7,22 @@
     tools:context=".view.activites.starup.SplashScreenActivity">
 <ImageView
     android:id="@+id/icon"
-    android:layout_width="200dp"
-    android:layout_height="200dp"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     android:layout_centerInParent="true"
     android:src="@drawable/logo_xd"/>
+
+    <TextView
+        android:layout_below="@+id/icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="c h a t k e r"
+       android:fontFamily="@font/sourastra"
+        android:textSize="40dp"
+        android:layout_marginTop="30dp"
+        android:textColor="#DD3E3204"
+        android:layout_centerInParent="true">
+    </TextView>
+
 
 </RelativeLayout>

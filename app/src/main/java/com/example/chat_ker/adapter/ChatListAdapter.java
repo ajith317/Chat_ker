@@ -15,6 +15,7 @@ import com.bumptech.glide.Glide;
 import com.example.chat_ker.R;
 import com.example.chat_ker.model.Chatlist;
 import com.example.chat_ker.view.activites.chats.ChatsActivity;
+import com.example.chat_ker.view.activites.dialog.DialogViewUser;
 import com.mikhaellopez.circularimageview.CircularImageView;
 
 import java.util.List;
@@ -58,6 +59,13 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.Holder
                         .putExtra("userName",chatlist.getUserName())
                         .putExtra("userProfile",chatlist.getUrlProfile())
                        );
+            }
+        });
+
+        holder.profile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new DialogViewUser(context,chatlist);
             }
         });
 

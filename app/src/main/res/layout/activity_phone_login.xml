@@ -83,13 +83,13 @@
                 android:maxLength="10"
                 android:hint="phone number"/>
         </LinearLayout>
-        <TextView
+        <!--<TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="16sp"
             android:textColor="#A39090"
             android:layout_marginTop="15dp"
-            android:text="Aavriyo SMS ed Type Keruvo"/>
+            android:text="Aavriyo SMS ed Type Keruvo"/>-->
 
         <EditText
             android:id="@+id/ed_code"
@@ -99,6 +99,7 @@
             android:layout_marginTop="20dp"
             android:maxLength="6"
             android:inputType="number"
+            android:visibility="gone"
             android:textCursorDrawable="@drawable/cursor_color"
             android:hint="OTP Thavo "/>
     </LinearLayout>

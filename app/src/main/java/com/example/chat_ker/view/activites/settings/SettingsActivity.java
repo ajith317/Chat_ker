@@ -1,14 +1,19 @@
 package com.example.chat_ker.view.activites.settings;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.databinding.DataBindingUtil;
 
 import com.bumptech.glide.Glide;
@@ -21,6 +26,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.mahfa.dnswitch.DayNightSwitch;
+import com.mahfa.dnswitch.DayNightSwitchListener;
 
 import java.util.Objects;
 
@@ -28,7 +35,11 @@ public class SettingsActivity extends AppCompatActivity {
     private ActivitySettingsBinding binding;
     private FirebaseUser firebaseUser;
     private FirebaseFirestore firebaseFirestore;
+    SharedPreferences sharedPreferences =null;
 
+    DayNightSwitch switchCompat;
+
+    private boolean isDark = true;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -47,6 +58,31 @@ public class SettingsActivity extends AppCompatActivity {
             }
 
       initClickAction();
+      //  sharedPreferences=getSharedPreferences("night",0);
+
+        switchCompat=findViewById(R.id.dayNight);
+
+
+        switchCompat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(isDark){
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                    isDark = false;
+                    /*SharedPreferences.Editor editor=sharedPreferences.edit();
+                    editor.putBoolean("night_mode",true);
+                    editor.commit();*/
+                }
+                else {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                    isDark =true;
+                    /*SharedPreferences.Editor editor=sharedPreferences.edit();
+                    editor.putBoolean("night_mode",false);
+                    editor.commit();*/
+                }
+            }
+        });
+
 
 
     }
@@ -58,6 +94,7 @@ public class SettingsActivity extends AppCompatActivity {
                 startActivity(new Intent(SettingsActivity.this, ProfileActivity.class));
             }
         });
+
     }
 
     private void getInfo() {            // collectionPath Users->Firebase
